@@ -1,21 +1,25 @@
 package com.up42.up42backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 public class Feature {
     private String id;
     private Long timestamp;
     private Long beginViewingDate;
     private Long endViewingDate;
     private String missionName;
+    private String quicklook;
 
     public Feature() {
     }
 
-    public Feature(String id, Long timestamp, Long beginViewingDate, Long endViewingDate, String missionName) {
+    public Feature(String id, Long timestamp, Long beginViewingDate, Long endViewingDate, String missionName, String quicklook) {
         this.id = id;
         this.timestamp = timestamp;
         this.beginViewingDate = beginViewingDate;
         this.endViewingDate = endViewingDate;
         this.missionName = missionName;
+        this.quicklook = quicklook;
     }
 
     public String getId() {
@@ -24,6 +28,14 @@ public class Feature {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getQuicklook() {
+        return quicklook;
+    }
+
+    public void setQuicklook(String quicklook) {
+        this.quicklook = quicklook;
     }
 
     public Long getTimestamp() {
