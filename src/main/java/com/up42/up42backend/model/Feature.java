@@ -1,7 +1,8 @@
 package com.up42.up42backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+/**
+ * Model class representing a set of features for a given identifier.
+ */
 public class Feature {
     private String id;
     private Long timestamp;

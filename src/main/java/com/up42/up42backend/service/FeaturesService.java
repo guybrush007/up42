@@ -10,12 +10,17 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Service to access features data from default source data file.
+ */
 @Service
 public class FeaturesService {
+    private static Logger LOG = Logger.getLogger(FeaturesService.class.getName());
     private final static String DEFAULT_SOURCE_FILE = "source-data.json";
-
     private Map<String, Feature> features;
 
     public FeaturesService() {
@@ -32,7 +37,7 @@ public class FeaturesService {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, "Error while parsing source-data.json", e);
         }
     }
 
@@ -52,7 +57,16 @@ public class FeaturesService {
         );
     }
 
+    /**
+     * Retrieves the Feature object with matching id.
+     * @param id identifier of the Feature
+     * @return the matching Feature object or null if not found.
+     */
     public Feature getFeatureById(final String id) {
+        if (id == null) {
+            return null;
+        }
+
         return this.features.get(id);
     }
 
