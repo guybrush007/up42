@@ -26,7 +26,7 @@ public class FeaturesController {
 
     @GetMapping(value = "/features/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Feature getFeature(@PathVariable String id) {
-        Feature feature = featuresService.getFeatureById(id);
+        Feature feature = this.featuresService.getFeatureById(id);
 
         if (feature == null) {
             throw new ResponseStatusException(
@@ -41,12 +41,13 @@ public class FeaturesController {
     public byte[] getFeatureOutlook(@PathVariable String id) {
         Feature feature = this.getFeature(id);
 
-        if (feature.getQuicklook() == null) {
+        String quicklook = this.featuresService.getQuicklook(id);
+        if (quicklook == null) {
             throw new ResponseStatusException(
                     HttpStatus.NO_CONTENT,String.format("Feature id=%s does not contains quicklook", id)
             );
         }
 
-        return Base64.getDecoder().decode(feature.getQuicklook());
+        return Base64.getDecoder().decode(quicklook);
     }
 }

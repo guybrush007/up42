@@ -9,8 +9,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 class FeaturesServiceTest {
+    public static final String TEST_QUICK_LOOK_START = "iVBORw0KGgoAAAANSUhEUgAAAgAAAAHRCAIAAACT";
+    public static final String FEATURE_ID_WITHOUT_QUICKLOOK = "b0d3bf6a-ff54-49e0-a4cb-e57dcb68d3b5";
     private FeaturesService service;
-
     private Feature testFeature;
 
     @BeforeEach
@@ -21,8 +22,7 @@ class FeaturesServiceTest {
                 1554831167697l,
                 1554831167697l,
                 1554831202043l,
-                "Sentinel-1B",
-                "iVBORw0KGgoAAAANSUhEUgAAAgAAAAHRCAIAAACT"
+                "Sentinel-1B"
         );
     }
 
@@ -35,12 +35,11 @@ class FeaturesServiceTest {
         assertEquals(this.testFeature.getBeginViewingDate(), feature.getBeginViewingDate());
         assertEquals(this.testFeature.getEndViewingDate(), feature.getEndViewingDate());
         assertEquals(this.testFeature.getMissionName(), feature.getMissionName());
-        assertTrue(feature.getQuicklook().startsWith(testFeature.getQuicklook()));
     }
 
     @Test
-    public void testGetFeatureById_whenInvalidId_returnsNull() {
-        Feature feature = service.getFeatureById("invalid");
+    public void testGetFeatureById_whenUnknownId_returnsNull() {
+        Feature feature = service.getFeatureById("unknown");
         assertNull(feature);
     }
 
@@ -54,5 +53,29 @@ class FeaturesServiceTest {
     public void testGetFeatures() {
         List<Feature> features = service.getFeatures();
         assertEquals(14, features.size());
+    }
+
+    @Test
+    public void testGetQuicklook_whenCalledWithIdContainingQuicklook_returnsString(){
+        String quicklook = service.getQuicklook(this.testFeature.getId());
+        assertTrue(quicklook.startsWith(TEST_QUICK_LOOK_START));
+    }
+
+    @Test
+    public void testGetQuicklook_whenCalledWithIdNotContainingQuicklook_returnsNull(){
+        String quicklook = service.getQuicklook(FEATURE_ID_WITHOUT_QUICKLOOK);
+        assertNull(quicklook);
+    }
+
+    @Test
+    public void testGetQuicklook_whenCalledWithUnknownId_returnsNull(){
+        String quicklook = service.getQuicklook("unknown");
+        assertNull(quicklook);
+    }
+
+    @Test
+    public void testGetQuicklook_whenCalledWithNullId_returnsNull(){
+        String quicklook = service.getQuicklook(null);
+        assertNull(quicklook);
     }
 }

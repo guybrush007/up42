@@ -22,6 +22,7 @@ public class FeaturesService {
     private static Logger LOG = Logger.getLogger(FeaturesService.class.getName());
     private final static String DEFAULT_SOURCE_FILE = "source-data.json";
     private Map<String, Feature> features;
+    private  Map<String, String> quicklooks;
 
     public FeaturesService() {
         ObjectMapper mapper = new ObjectMapper();
@@ -29,11 +30,17 @@ public class FeaturesService {
         InputStream resource = classLoader.getResourceAsStream(DEFAULT_SOURCE_FILE);
 
         this.features = new HashMap<>();
+        this.quicklooks = new HashMap<>();
         try {
             JsonNode jsonNode = mapper.readTree(resource);
             for (int i = 0 ; i < jsonNode.size() ; i++) {
                 Feature feature = extractFeatureFromJsonNode(jsonNode.get(i));
-                features.put(feature.getId(), feature);
+                this.features.put(feature.getId(), feature);
+
+                String quicklook = extractQuicklookFromJsonNode(jsonNode.get(i));
+                if (quicklook != null){
+                    this.quicklooks.put(feature.getId(), quicklook);
+                }
             }
 
         } catch (IOException e) {
@@ -42,19 +49,28 @@ public class FeaturesService {
     }
 
     private static Feature extractFeatureFromJsonNode(JsonNode jsonNode) {
-        JsonNode featureNode = jsonNode.get("features").get(0);
-        JsonNode propertiesNode = featureNode.get("properties");
+        JsonNode propertiesNode = getPropertiesNode(jsonNode);
         JsonNode acquisitionNode = propertiesNode.get("acquisition");
-        JsonNode quickLookNode = propertiesNode.get("quicklook");
 
         return new Feature(
                 propertiesNode.get("id").asText(),
                 propertiesNode.get("timestamp").asLong(),
                 acquisitionNode.get("beginViewingDate").asLong(),
                 acquisitionNode.get("endViewingDate").asLong(),
-                acquisitionNode.get("missionName").asText(),
-                quickLookNode != null ? quickLookNode.asText() : null
+                acquisitionNode.get("missionName").asText()
         );
+    }
+
+    private static String extractQuicklookFromJsonNode(JsonNode jsonNode) {
+        JsonNode propertiesNode = getPropertiesNode(jsonNode);
+
+        JsonNode quickLookNode = propertiesNode.get("quicklook");
+        return quickLookNode != null ? quickLookNode.asText() : null;
+    }
+
+    private static JsonNode getPropertiesNode(JsonNode jsonNode) {
+        JsonNode featureNode = jsonNode.get("features").get(0);
+        return featureNode.get("properties");
     }
 
     /**
@@ -66,11 +82,26 @@ public class FeaturesService {
         if (id == null) {
             return null;
         }
-
         return this.features.get(id);
     }
 
+    /**
+     * Retrieves all Features
+     * @return A list of Feature objects
+     */
     public List<Feature> getFeatures() {
         return this.features.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves the quicklook Base64 String matching the feature id
+     * @param id identifier of the Feature
+     * @return the matching quicklook Base64 String or null if not found
+     */
+    public String getQuicklook(final String id) {
+        if (id == null) {
+            return null;
+        }
+        return this.quicklooks.get(id);
     }
  }
