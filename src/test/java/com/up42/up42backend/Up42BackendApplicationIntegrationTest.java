@@ -16,6 +16,7 @@ import java.io.IOException;
 
 public class Up42BackendApplicationIntegrationTest {
     private RestTemplate restTemplate;
+    private String baseUrl = "http://localhost:8080";
 
     @BeforeEach
     public void setUp() {
@@ -24,14 +25,14 @@ public class Up42BackendApplicationIntegrationTest {
 
     @Test
     public void testGetFeatures_returnsAllFeatures() {
-        ResponseEntity<Feature[]> response = restTemplate.getForEntity("http://localhost:8080/features", Feature[].class);
+        ResponseEntity<Feature[]> response = restTemplate.getForEntity(baseUrl + "/features", Feature[].class);
         assertNotNull(response.getBody());
         assertEquals(14, ((Feature[])response.getBody()).length);
     }
 
     @Test
     public void testGetFeatureById_returnsFeature() {
-        ResponseEntity<Feature> response = restTemplate.getForEntity("http://localhost:8080/features/39c2f29e-c0f8-4a39-a98b-deed547d6aea", Feature.class);
+        ResponseEntity<Feature> response = restTemplate.getForEntity(baseUrl + "/features/39c2f29e-c0f8-4a39-a98b-deed547d6aea", Feature.class);
         Feature feature = response.getBody();
         assertNotNull(feature);
         assertEquals("39c2f29e-c0f8-4a39-a98b-deed547d6aea" , feature.getId());
@@ -44,7 +45,7 @@ public class Up42BackendApplicationIntegrationTest {
     @Test
     public void testGetFeatureById_whenInvalidId_returns404() {
         try {
-            restTemplate.getForEntity("http://localhost:8080/features/invalid", Feature.class);
+            restTemplate.getForEntity(baseUrl + "/features/invalid", Feature.class);
         } catch (HttpClientErrorException e) {
             assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
         }
@@ -52,7 +53,7 @@ public class Up42BackendApplicationIntegrationTest {
 
     @Test
     public void testGetFeatureQuickLook_returnsImage() {
-        ResponseEntity<byte[]> response = restTemplate.getForEntity("http://localhost:8080/features/39c2f29e-c0f8-4a39-a98b-deed547d6aea/quicklook", byte[].class);
+        ResponseEntity<byte[]> response = restTemplate.getForEntity(baseUrl + "/features/39c2f29e-c0f8-4a39-a98b-deed547d6aea/quicklook", byte[].class);
         byte[] image = response.getBody();
         assertNotNull(image);
         try {
@@ -64,7 +65,7 @@ public class Up42BackendApplicationIntegrationTest {
 
     @Test
     public void testGetFeatureQuickLook_whenFeatureHasNoQuicklook_returns204() {
-        ResponseEntity<byte[]> response = restTemplate.getForEntity("http://localhost:8080/features/b0d3bf6a-ff54-49e0-a4cb-e57dcb68d3b5/quicklook", byte[].class);
+        ResponseEntity<byte[]> response = restTemplate.getForEntity(baseUrl + "/features/b0d3bf6a-ff54-49e0-a4cb-e57dcb68d3b5/quicklook", byte[].class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }
