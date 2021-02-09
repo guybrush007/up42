@@ -9,18 +9,16 @@ public class Feature {
     private Long beginViewingDate;
     private Long endViewingDate;
     private String missionName;
-    private String quicklook;
 
     public Feature() {
     }
 
-    public Feature(String id, Long timestamp, Long beginViewingDate, Long endViewingDate, String missionName, String quicklook) {
+    public Feature(String id, Long timestamp, Long beginViewingDate, Long endViewingDate, String missionName) {
         this.id = id;
         this.timestamp = timestamp;
         this.beginViewingDate = beginViewingDate;
         this.endViewingDate = endViewingDate;
         this.missionName = missionName;
-        this.quicklook = quicklook;
     }
 
     public String getId() {
@@ -29,14 +27,6 @@ public class Feature {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getQuicklook() {
-        return quicklook;
-    }
-
-    public void setQuicklook(String quicklook) {
-        this.quicklook = quicklook;
     }
 
     public Long getTimestamp() {
